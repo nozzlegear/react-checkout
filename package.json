@@ -1,0 +1,51 @@
+{
+  "name": "react-checkout",
+  "version": "1.0.0",
+  "description": "Shopify-style checkout and tracking pages as React components.",
+  "main": "bin/index.js",
+  "scripts": {
+    "pretest": "gulp",
+    "prepublish": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nozzlegear/react-checkout.git"
+  },
+  "keywords": [
+    "shopify",
+    "react",
+    "component",
+    "nozzlegear"
+  ],
+  "author": "Joshua Harms <joshua@nozzlegear.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nozzlegear/react-checkout/issues"
+  },
+  "homepage": "https://github.com/nozzlegear/react-checkout#readme",
+  "devDependencies": {
+    "chokidar": "^1.5.1",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-callback": "0.0.3",
+    "gulp-clean-css": "^2.0.9",
+    "gulp-foreach": "^0.1.0",
+    "gulp-if": "^2.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.1",
+    "gulp-typescript": "^2.13.5",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "lazypipe": "^1.0.1",
+    "merge2": "^1.0.2",
+    "webpack-stream": "^3.2.0"
+  },
+  "dependencies": {
+    "auto-prop-component": "^1.0.0",
+    "cc-expiry": "^1.0.0",
+    "lodash": "^4.13.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
+  }
+}

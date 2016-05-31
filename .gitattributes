@@ -1,0 +1,4 @@
+# Override GitHub's language detection
+
+dist/* linguist-vendored
+gulpfile.js linguist-vendored
