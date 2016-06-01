@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as dom from "react-dom";
 import * as classes from "classnames";
 import * as creditcard from "creditcardutils";
+import FontAwesome = require("react-fontawesome");
 import {format as formatExpiry} from "cc-expiry";
 import {Address, Coupon, LineItem, Totals} from "../index"; 
 import {defaults, find, some, filter, clone, map, uniqueId, merge} from 'lodash';
@@ -249,19 +250,19 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                         <a href="/cart">{"Cart"}</a> 
                     </li>
                     <li className="chevron">
-                        <i className="fa fa-one-rem fa-chevron-right" />
+                        <FontAwesome name="chevron-right" className="fa-one-rem" />
                     </li>
                     <li className={classes({"active" : currentPage === page.customerInformation})}>
                         {currentPage <= page.customerInformation ? "Customer Information" : <a href="#" onClick={navigate("customer")}>{"Customer Information"}</a>}
                     </li>
                     <li className="chevron">
-                        <i className="fa fa-one-rem fa-chevron-right" />
+                        <FontAwesome name="chevron-right" className="fa-one-rem" />
                     </li>
                     <li className={classes({"active" : currentPage === page.shippingMethod})}>
                         {currentPage <= page.shippingMethod ? "Shipping Information" : <a href="#" onClick={navigate("shipping")}>{"Shipping Information"}</a>}
                     </li>
                     <li className="chevron">
-                        <i className="fa fa-one-rem fa-chevron-right" />
+                        <FontAwesome name="chevron-right" className="fa-one-rem" />
                     </li>
                     <li className={classes({"active" : currentPage === page.paymentMethod})}>
                         {"Payment method"}
@@ -283,7 +284,7 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                     </div>
                     <div className="xs-col-6-24 text-center">
                         <button className="win-button" onClick={(e) => this.applyDiscount(e)}>
-                            {loading ? <i key={uniqueId()} className="fa fa-spinner fa-spin" /> : "Apply"}
+                            {loading ? <FontAwesome key={uniqueId()} name="spinner" spin /> : "Apply"}
                         </button>
                     </div>
                 </div>
@@ -413,7 +414,7 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                 <div className="ms-row vc zero-margin">
                     <div className="xs-col-8-24">
                         <a href="/cart">
-                            <i className="fa fa-one-rem fa-chevron-left marRight5" />
+                            <FontAwesome name="chevron-left" className="marRight5 fa-one-rem" />
                             Return to cart
                         </a>
                     </div>
@@ -469,7 +470,7 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                 <div className="ms-row vc zero-margin">
                     <div className="xs-col-12-24">
                         <a href="#" onClick={back}>
-                            <i className="fa fa-one-rem fa-chevron-left marRight5" />
+                            <FontAwesome name="chevron-left" className="marRight5 fa-one-rem" />
                             Return to customer information
                         </a>
                     </div>
@@ -546,13 +547,13 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                 <div className="ms-row vc zero-margin">
                     <div className="xs-col-12-24">
                         <a href="#" onClick={back}>
-                            <i className="fa fa-one-rem fa-chevron-left marRight5" onClick={back} />
+                            <FontAwesome name="chevron-left" className="marRight5 fa-one-rem" />
                             Return to shipping method
                         </a>
                     </div>
                     <div className="xs-col-12-24 text-right">
                         <button className="win-button win-button-primary" onClick={(e) => this.completeOrder(e)}>
-                            { loading ? [<i key={uniqueId()} className="fa fa-spinner fa-spin marRight5" />, "Placing order"] : "Complete order" }
+                            { loading ? [<FontAwesome key={uniqueId()} name="spinner" className="marRight5" spin />, "Placing order"] : "Complete order" }
                         </button>
                     </div>
                 </div>
@@ -695,8 +696,12 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                 break;
         }
         
+        // FontAwesome must be included with the page.
+        const fontAwesome = <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" />;
+        
         return (
             <main id="checkout-page" className="ms-grid">
+                {fontAwesome}
                 <div className="ms-row">
                     {this.generateHeader(true)}
                     {this.generateCartSummary()}

@@ -122,8 +122,16 @@ main#checkout-page.ms-grid, main#tracking-page.ms-grid
         color:$linkColor;
     }
     
-    i.fa.fa-one-rem, i.fa.one-rem{
+    .fa.fa-one-rem, .fa.one-rem{
         font-size:1rem;
+    }
+    
+    .fa.marRight5{
+        margin-right: .5rem;
+    }
+    
+    .fa.marLeft5{
+        margin-left: .5rem;
     }
     
     h1.page-title

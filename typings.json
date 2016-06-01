@@ -7,7 +7,8 @@
     "auto-prop-component": "file:node_modules/auto-prop-component/dist/auto-prop-component.d.ts",
     "cc-expiry": "file:node_modules/cc-expiry/dist/cc-expiry.d.ts",
     "creditcardutils": "github:nozzlegear/creditcardutils.d.ts#28c0934",
-    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519",
+    "react-fontawesome": "github:nozzlegear/react-fontawesome.d.ts#dd8718f"
   },
   "globalDependencies": {
     "classnames": "registry:dt/classnames#0.0.0+20160316155526",
