@@ -711,15 +711,13 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                                 {renderedPage}
                             </div>
                         </div>
-                        <div className="ms-row" id="copyright">
-                            <div className="m-col-23-24 m-col-24-offset-1">
-                                <p>
-                                    {`© ${this.props.siteName}, ${new Date().getUTCFullYear()}`}
-                                    <a href={`mailto:${this.props.supportEmail}`} className="pull-right">
-                                        {this.props.supportEmail}
-                                    </a>
-                                </p>
-                            </div>
+                        <div id="copyright">
+                            <p>
+                                {`© ${this.props.siteName}, ${new Date().getUTCFullYear()}`}
+                                <a href={`mailto:${this.props.supportEmail}`} className="pull-right">
+                                    {this.props.supportEmail}
+                                </a>
+                            </p>
                         </div>
                     </section>
                 </div>
