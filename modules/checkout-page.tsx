@@ -14,12 +14,11 @@ import {AutoPropComponent} from "auto-prop-component";
 
 declare var require: any;
 
-require("node_modules/winjs-grid/dist/css/min/mscom-grid.min.css");
-require("node_modules/winjs/css/ui-light.min.css");
-require("wwwroot/css/overrides.scss");
-require("wwwroot/css/winjs-overrides.scss");
-require("wwwroot/css/theme.scss");
-require("wwwroot/css/checkout-and-tracking.scss");
+if (true === false)
+{
+    require("node_modules/winjs-grid/dist/css/min/mscom-grid.min.css");
+    require("node_modules/winjs/css/ui-light.min.css");
+}
 
 export enum page
 {
@@ -244,7 +243,7 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
         
         return (
             <Container>
-                <h1 className="page-title">{"Pet Eternal"}</h1>
+                <h1 className="page-title">{this.props.siteName}</h1>
                 <ul id="nav">
                     <li>
                         <a href="/cart">{"Cart"}</a> 

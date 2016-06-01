@@ -1,0 +1,441 @@
+$strongColor: #4b4b4b;
+$linkColor: #337ab7;
+$mobileMaxWidth: 767px;
+$baseHigh: rgb(0, 0, 0);
+$baseLow: fade($baseHigh, 20%);
+$baseMediumMid: fade($baseHigh, 40%);
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,300);
+
+html {
+  font-size: 62.5%; /* Sets up the Base 10 stuff */
+  font-family: 'Roboto', sans-serif;
+}
+
+body{
+    background-color: rgba(0, 0, 0, .04);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.6rem;
+    color:#333;
+    margin:0;
+}
+
+#contenthost
+{
+    padding:0;
+    overflow-y: scroll;
+}
+
+main#checkout-page.ms-grid, main#tracking-page.ms-grid
+{
+    width:100%;
+    height: 100%;
+    
+    .win-button{
+        border-style: solid;
+        margin: 0px;
+        min-height: 32px;
+        min-width: 120px;
+        padding: 4px 8px;
+        border-width: 2px;
+        background-clip: border-box;
+        border-radius: 0;
+        touch-action: manipulation;
+        -webkit-appearance: none;
+        font-size: 1.6rem;
+    }
+    
+    .win-button {
+        color: $baseHigh;
+        background-color: rgba(0,0,0,.2);
+        border-color: transparent;
+
+        &.win-button-primary {
+            color: #fff;
+            background-color: #0078d7;
+        }
+
+        &:hover,
+        &.win-button-primary:hover {
+            border-color: $baseMediumMid;
+        }
+
+        &:active,
+        &.win-button-primary:active {
+            background-color: $baseMediumMid;
+        }
+
+        &:disabled,
+        &.win-button-primary:disabled {
+            color: $baseLow;
+            background-color: $baseLow;
+            border-color: transparent;
+        }
+    }
+    
+    .text-right
+    {
+        text-align: right;
+    }
+    
+    .text-center
+    {
+        text-align: center;
+    }
+    
+    .text-left
+    {
+        text-align: left;
+    }
+    
+    .pull-right
+    {
+        float: right;
+    }
+    
+    p.error{
+        margin-top: 0;
+        color: #e74c3c;
+    }
+    
+    @media all and (max-width: $mobileMaxWidth)
+    {
+        padding: 0;
+    }
+    
+    .address-line
+    {
+        span
+        {
+            display: block;
+            padding: .1rem 0;
+        }
+    }
+    
+    button{
+        cursor:pointer;
+    }
+    
+    a{
+        text-decoration: none;
+        color:$linkColor;
+    }
+    
+    i.fa.fa-one-rem, i.fa.one-rem{
+        font-size:1rem;
+    }
+    
+    h1.page-title
+    {
+        font-size:3rem;
+        color: $strongColor;
+        margin-top:0;
+        font-weight: 300;
+        margin:0 0 1rem 0;
+    }
+    
+    hr{
+        margin: 2.1rem 0;
+        padding:0;
+        border-left:0;
+        border-right:0;
+        border-top: 1px solid rgba(6, 8, 8, 0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    input.win-textbox, select.win-select
+    {
+        background-image: none;
+        font: inherit;
+        background-clip: border-box;
+        font-weight: 400;
+        line-height: 1.333;
+        margin: .8rem 0;
+        min-width: 64px;
+        min-height: 28px;
+        box-sizing: border-box;
+        padding: 3px 6px 5px 10px;
+        outline: 0;
+        color: #000;
+        font-size: 1.6rem;
+        max-width: 100%;
+        background-color: #ffffff;
+        border: 1px solid #cccccc;
+        display: block;
+        width: 100%;
+        height: 39px;
+        border-radius: 0;
+        border-color: #ccc;
+        box-shadow: none;
+        border-width: 1px;
+        transition: all 0.2s ease-out;
+        
+        &.win-select
+        {
+            color: rgb(85, 85, 85);
+        }
+    }
+    
+    .form-group input, .form-group select, .form-group textarea, .form-group input.win-textbox, .form-group select.win-select
+    {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        -ms-box-shadow: none;
+        box-shadow:none;
+        border-width:1px;
+        -ms-transition: all 0.2s ease-out;
+        -moz-transition: all 0.2s ease-out;
+        -webkit-transition: all 0.2s ease-out;
+        transition: all 0.2s ease-out;
+        
+        &:focus{
+            $shadowColor: #3498db;
+            
+            -ms-box-shadow: 0 0 0 1px $shadowColor;
+            -webkit-box-shadow: 0 0 0 1px $shadowColor;
+            -moz-box-shadow: 0 0 0 1px $shadowColor;
+            box-shadow: 0 0 0 1px $shadowColor;
+        }
+    }
+    
+    > div.ms-row 
+    {
+        height:100%;
+        margin:0;
+        
+        > section
+        {
+            padding-top: 4rem;
+            height: 100vh;
+            
+            @media all and (max-width: $mobileMaxWidth)
+            {
+                height: auto;
+                padding: 4rem 1.5rem;
+            }
+        }
+    }   
+    
+    section#checkout-header
+    {
+        background-color:#fff;
+        border-bottom: 1px solid #ddd;
+        
+        &.empty h1
+        {
+            margin: 0;
+        }
+    }
+        
+    section#panels
+    {
+        background-color:#fff;
+        display:flex;
+        flex-direction: column;
+        border-right: 1px solid #ddd;
+        
+        @media all and (max-width: $mobileMaxWidth)
+        {
+            border-right: none;
+            border-top: 1px solid #ddd;
+            padding-top: 0;
+        }
+        
+        #copyright
+        {
+            padding-top:5rem;
+            background-color:#fff;
+            -ms-flex: 1 0;
+            flex: 1 0;
+            display:flex;
+            justify-content: flex-end;
+            flex-direction:column;
+            
+            > div
+            {
+                border-top: 1px solid #ddd;
+            }
+        }
+        
+        form {
+            padding:4rem 0;
+            margin:0;
+            
+            .form-group
+            {
+                &:last-child
+                {
+                    margin-bottom:0;
+                }
+            }
+        }
+        
+        .form-group
+        {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin: 1.5rem 0;
+            
+            > label.control-label
+            {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                background-color:#fff;
+                padding: 1.5rem 1vw;
+                border-bottom: 1px solid rgb(221, 221, 221);
+                margin: 0;
+                font-weight: bold;
+                color: #46515f;
+            }
+            
+            > .form-container
+            {
+                padding: 2rem 0;
+                background-color: rgba(0, 0, 0, .03);
+                margin: 0;
+                
+                > div.ms-row
+                {
+                    margin:0;
+                }
+                
+                select.win-select
+                {
+                    background-color:#fff;
+                    margin-bottom: .7rem;
+                }
+            }
+        }
+        
+        section#customer-information
+        {
+            
+        }        
+        
+        section#shipping-information
+        {
+            div#shipping-address > div
+            {
+                padding: 1.5rem 1vw;
+                
+                a
+                {
+                    margin-top: 0.5rem;
+                    display: block;
+                    font-size:1.5rem;
+                }
+            }
+        }
+        
+        section#payment-method
+        {
+            #credit-card-form
+            {
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                background-color: rgba(0, 0,0,.03);
+                padding: 0 0 2rem 0;
+                margin: 2rem 0;
+                
+                > div.ms-row {
+                    margin:0;
+                }
+                
+                #card-form-header
+                {
+                    background-color:#fff;
+                    padding: 1.5rem 0px;
+                    border-bottom: 1px solid rgb(221, 221, 221);
+                    margin-bottom: 2rem;
+                }
+            }
+            
+            #billing-address
+            {
+                border-bottom:0;
+                border-radius: 3px;
+                
+                > div
+                {
+                    border-bottom:1px solid #ddd;
+                    border-radius: 3px;
+                    margin: 0;
+                }
+                
+                .address-form
+                {
+                    border: 0;
+                    border-bottom:1px solid #ddd;
+                }
+            }
+        }
+    }
+    
+    section#cart-summary
+    {        
+        .cart-item
+        {
+            img
+            {
+                max-height:4rem;
+            }
+        }
+        
+        .subtotal, .tax-total
+        {
+            padding-bottom: 1rem;
+        }
+        
+        .grand-total .text-right
+        {
+            color: #999;
+            
+            strong
+            {
+                color: $strongColor;
+                font-size: 2.5rem;
+            }
+        }
+    }
+       
+    ul#nav
+    {
+        margin:0;
+        padding:0;
+        list-style-type: none;
+        font-size:1.4rem;
+        color:#999;
+        
+        @media all and (max-width: $mobileMaxWidth)
+        {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        li {
+            display: inline-block;
+            padding-left:1.5rem;
+            cursor:pointer;
+            
+            @media all and (max-width: $mobileMaxWidth)
+            {
+                padding-left: 0;
+            }
+            
+            &:first-child {
+                padding-left:0;
+            }
+            
+            &.chevron{
+                color:#666;
+                cursor: text;
+            }
+            
+            &.active{
+                color: #333;
+            }
+        }   
+    }
+}

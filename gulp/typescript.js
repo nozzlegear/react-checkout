@@ -30,20 +30,16 @@ const findTsDir = (outputPath, isSingleFilePath) =>
     const patterns = [
         {
             startsWith: "modules",
-            replaceWith: `bin${path.sep}modules`  
+            replaceWith: `dist${path.sep}modules`  
         },
         {
-            startsWith: "routes",
-            replaceWith: `bin${path.sep}routes`
+            startsWith: "demo",
+            replaceWith: `demo${path.sep}`
         },
         {
-            startsWith: "views",
-            replaceWith: `bin${path.sep}views`
+            startsWith: "index.ts",
+            replaceWith: `dist${path.sep}`
         },
-        {
-            startsWith: "js",
-            replaceWith: `wwwroot${path.sep}js`,
-        }
     ]
     
     const pattern = lodash.find(patterns, p => singlePath.startsWith(p.startsWith) || singlePath.startsWith(`${path.sep}${p.startsWith}`));

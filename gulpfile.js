@@ -1,5 +1,6 @@
 "use strict";
 
+const seq         = require("gulp-sequence");
 const gulp        = require("gulp");
 const chokidar    = require("chokidar");
 //Tasks
@@ -12,17 +13,24 @@ gulp.task("sass", () =>
     return sassTask.task(gulp.src(sassTask.files));
 })
 
-gulp.task("ts", () =>
+gulp.task("ts:demo", () =>
+{
+    return tsTask.task(gulp.src("demo/demos.tsx"), "demo/demos.tsx");
+})
+
+gulp.task("ts:lib", () =>
 {
     return tsTask.task(gulp.src(tsTask.files));
-});
+})
+
+gulp.task("ts", ["ts:lib", "ts:demo"]);
 
 gulp.task("webpack", () =>
 {
     return webpackTask.task(gulp.src(webpackTask.files));
 })
 
-gulp.task("default", ["sass", "ts", "webpack"]);
+gulp.task("default", seq("sass", "ts", "webpack"));
 
 gulp.task("watch", ["default"], (cb) =>
 {

@@ -2,4 +2,5 @@
 
 dist/* linguist-vendored
 gulp/* linguist-vendored
+demo/* linguist-vendored
 gulpfile.js linguist-vendored

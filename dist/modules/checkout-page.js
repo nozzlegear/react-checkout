@@ -14,12 +14,10 @@ var countries_1 = require("../data/countries");
 var cart_summary_1 = require("./cart-summary");
 var address_line_1 = require("./address-line");
 var auto_prop_component_1 = require("auto-prop-component");
-require("node_modules/winjs-grid/dist/css/min/mscom-grid.min.css");
-require("node_modules/winjs/css/ui-light.min.css");
-require("wwwroot/css/overrides.scss");
-require("wwwroot/css/winjs-overrides.scss");
-require("wwwroot/css/theme.scss");
-require("wwwroot/css/checkout-and-tracking.scss");
+if (true === false) {
+    require("node_modules/winjs-grid/dist/css/min/mscom-grid.min.css");
+    require("node_modules/winjs/css/ui-light.min.css");
+}
 (function (page) {
     page[page["customerInformation"] = 0] = "customerInformation";
     page[page["shippingMethod"] = 1] = "shippingMethod";
@@ -134,7 +132,7 @@ var CheckoutPage = (function (_super) {
             }
             return output;
         };
-        return (React.createElement(Container, null, React.createElement("h1", {className: "page-title"}, "Pet Eternal"), React.createElement("ul", {id: "nav"}, React.createElement("li", null, React.createElement("a", {href: "/cart"}, "Cart")), React.createElement("li", {className: "chevron"}, React.createElement("i", {className: "fa fa-one-rem fa-chevron-right"})), React.createElement("li", {className: classes({ "active": currentPage === page.customerInformation })}, currentPage <= page.customerInformation ? "Customer Information" : React.createElement("a", {href: "#", onClick: navigate("customer")}, "Customer Information")), React.createElement("li", {className: "chevron"}, React.createElement("i", {className: "fa fa-one-rem fa-chevron-right"})), React.createElement("li", {className: classes({ "active": currentPage === page.shippingMethod })}, currentPage <= page.shippingMethod ? "Shipping Information" : React.createElement("a", {href: "#", onClick: navigate("shipping")}, "Shipping Information")), React.createElement("li", {className: "chevron"}, React.createElement("i", {className: "fa fa-one-rem fa-chevron-right"})), React.createElement("li", {className: classes({ "active": currentPage === page.paymentMethod })}, "Payment method"))));
+        return (React.createElement(Container, null, React.createElement("h1", {className: "page-title"}, this.props.siteName), React.createElement("ul", {id: "nav"}, React.createElement("li", null, React.createElement("a", {href: "/cart"}, "Cart")), React.createElement("li", {className: "chevron"}, React.createElement("i", {className: "fa fa-one-rem fa-chevron-right"})), React.createElement("li", {className: classes({ "active": currentPage === page.customerInformation })}, currentPage <= page.customerInformation ? "Customer Information" : React.createElement("a", {href: "#", onClick: navigate("customer")}, "Customer Information")), React.createElement("li", {className: "chevron"}, React.createElement("i", {className: "fa fa-one-rem fa-chevron-right"})), React.createElement("li", {className: classes({ "active": currentPage === page.shippingMethod })}, currentPage <= page.shippingMethod ? "Shipping Information" : React.createElement("a", {href: "#", onClick: navigate("shipping")}, "Shipping Information")), React.createElement("li", {className: "chevron"}, React.createElement("i", {className: "fa fa-one-rem fa-chevron-right"})), React.createElement("li", {className: classes({ "active": currentPage === page.paymentMethod })}, "Payment method"))));
     };
     CheckoutPage.prototype.generateCartSummary = function () {
         var _this = this;
