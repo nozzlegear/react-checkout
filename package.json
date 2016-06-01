@@ -1,0 +1,23 @@
+{
+  "name": "react-checkout-gh-pages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "react-checkout": "github:nozzlegear/react-checkout"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nozzlegear/react-checkout.git"
+  },
+  "author": "Joshua Harms <joshua@nozzlegear.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nozzlegear/react-checkout/issues"
+  },
+  "homepage": "https://github.com/nozzlegear/react-checkout#readme"
+}
