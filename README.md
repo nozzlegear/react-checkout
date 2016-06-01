@@ -1,7 +1,7 @@
 # react-checkout
 Shopify-style checkout and tracking page as React components.
 
-** This component is currently a work in progress. Please check back soon! **
+**This component is currently a work in progress. Please check back soon!**
 
 ![React Checkout](https://i.imgur.com/OCIQLJm.png)
 
