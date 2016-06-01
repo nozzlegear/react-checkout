@@ -55,7 +55,7 @@ export interface Totals
     
     ultimateTotal: number;
 }
-
+ 
 export {AddressLine} from "./modules/address-line";
 export {CartSummary} from "./modules/cart-summary";
 export {CheckoutPage} from "./modules/checkout-page";

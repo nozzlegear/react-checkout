@@ -278,7 +278,7 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
         const controls = (
             <div>
                 <div className="ms-row vc zero-margin discount-form">
-                    <div className="xs-col-18-24 form-group" style={{"marginBottom" : "0"}}>
+                    <div className="xs-col-18-24 form-group" style={{"marginBottom" : "0px"}}>
                         <input className="win-textbox" placeholder="Discount Code" value={code} onChange={this.updateState((s, v) => s.summary.code = v)} />
                     </div>
                     <div className="xs-col-6-24 text-center">
@@ -461,7 +461,7 @@ export class CheckoutPage extends AutoPropComponent<IProps, IState>
                                 { address.CountryCode === "US" ? "Standard Shipping" : "International Shipping"}
                             </div>
                             <div className="xs-col-9-24 text-right">
-                                { address.CountryCode === "US" ? "Free" : "USD $35.00"}
+                                {`USD $${this.props.totals.shippingTotal.toFixed(2)}`}
                             </div>
                         </div>
                     </div>

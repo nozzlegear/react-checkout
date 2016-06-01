@@ -88,7 +88,7 @@ export function CartSummary(props: IProps)
                             {"Shipping"}
                         </div>
                         <div className="xs-col-18-24 text-right">
-                            { totals.shippingTotal === 0 ? `Free` : "$35.00" }
+                            {`USD $${props.totals.shippingTotal.toFixed(2)}`}
                         </div>
                     </div>
                     <hr />

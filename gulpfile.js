@@ -40,19 +40,28 @@ gulp.task("watch", ["default"], (cb) =>
     {
         console.log(`${event}: Sass file ${path}`);
         
+        const webpack = () => webpackTask.task(gulp.src("demo/demos.js"));
+        
         if (path.indexOf("_variables.scss") > -1)
         {
             //Recompile all sass files with updated variables.
-            return sassTask.task(gulp.src(sassFiles));
+            return seq(sassTask.task(gulp.src(sassTask.files)), webpack());
         }
         
-        return sassTask.task(gulp.src(path));
+        return seq(sassTask.task(gulp.src(path)), webpack());
     })
     
-    chokidar.watch(tsTask.files, {ignoreInitial: true}).on("all", (event, path) =>
+    chokidar.watch(["demo/demos.tsx"].concat(tsTask.files), {ignoreInitial: true}).on("all", (event, path) =>
     {
         console.log(`${event}: TS file ${path}`);
         
-        return tsTask.task(gulp.src(path), path);
+        const build = seq(tsTask.task(gulp.src(path), path), webpackTask.task(gulp.src("demo/demos.js")));
+        
+        if (path === "index.ts")
+        {
+            return seq(build, webpackTask.task(gulp.src("dist/index.js")))
+        }
+        
+        return build; 
     })
 })

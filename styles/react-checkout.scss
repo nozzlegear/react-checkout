@@ -43,33 +43,30 @@ main#checkout-page.ms-grid, main#tracking-page.ms-grid
         touch-action: manipulation;
         -webkit-appearance: none;
         font-size: 1.6rem;
-    }
-    
-    .win-button {
         color: $baseHigh;
         background-color: rgba(0,0,0,.2);
         border-color: transparent;
-
-        &.win-button-primary {
-            color: #fff;
-            background-color: #0078d7;
-        }
-
-        &:hover,
-        &.win-button-primary:hover {
-            border-color: $baseMediumMid;
-        }
-
-        &:active,
-        &.win-button-primary:active {
-            background-color: $baseMediumMid;
-        }
 
         &:disabled,
         &.win-button-primary:disabled {
             color: $baseLow;
             background-color: $baseLow;
             border-color: transparent;
+        }
+        
+        &.win-button-primary {
+            color: #fff;
+            background-color: #0078d7;
+        }
+        
+        &:hover, &.win-button-primary:hover
+        {
+            border-color: rgba(0,0,0,.4);
+        }
+        
+        &:active, &.win-button-primary:active
+        {
+            background-color: rgba(0,0,0,.4);
         }
     }
     
@@ -96,6 +93,10 @@ main#checkout-page.ms-grid, main#tracking-page.ms-grid
     p.error{
         margin-top: 0;
         color: #e74c3c;
+    }
+    
+    .cursor-pointer{
+        cursor: pointer;
     }
     
     @media all and (max-width: $mobileMaxWidth)
@@ -187,6 +188,11 @@ main#checkout-page.ms-grid, main#tracking-page.ms-grid
         -moz-transition: all 0.2s ease-out;
         -webkit-transition: all 0.2s ease-out;
         transition: all 0.2s ease-out;
+        display: block;
+        width: 100%;
+        height: 39px;
+        border-radius: 0;
+        border-color: #cccccc;
         
         &:focus{
             $shadowColor: #3498db;
@@ -196,6 +202,12 @@ main#checkout-page.ms-grid, main#tracking-page.ms-grid
             -moz-box-shadow: 0 0 0 1px $shadowColor;
             box-shadow: 0 0 0 1px $shadowColor;
         }
+    }
+    
+    .win-checkbox, .win-radio {
+        margin-right: 8px;
+        margin-top: 12px;
+        margin-bottom: 12px;
     }
     
     > div.ms-row 
@@ -377,6 +389,13 @@ main#checkout-page.ms-grid, main#tracking-page.ms-grid
     {        
         .cart-item
         {
+            padding-top: 1rem;
+            
+            &:first-child
+            {
+                padding-top: 0;
+            }
+            
             img
             {
                 max-height:4rem;
