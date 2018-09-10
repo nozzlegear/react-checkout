@@ -1,63 +1,49 @@
 {
-  "name": "react-checkout",
-  "version": "1.0.0",
-  "description": "Shopify-style checkout and tracking pages as React components.",
-  "main": "bin/index.js",
-  "scripts": {
-    "pretest": "gulp",
-    "prepublish": "typings install & gulp",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nozzlegear/react-checkout.git"
-  },
-  "keywords": [
-    "shopify",
-    "react",
-    "component",
-    "nozzlegear"
-  ],
-  "author": "Joshua Harms <joshua@nozzlegear.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/nozzlegear/react-checkout/issues"
-  },
-  "homepage": "https://github.com/nozzlegear/react-checkout#readme",
-  "devDependencies": {
-    "chokidar": "^1.5.1",
-    "css-loader": "^0.23.1",
-    "file-loader": "^0.8.5",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-callback": "0.0.3",
-    "gulp-clean-css": "^2.0.9",
-    "gulp-foreach": "^0.1.0",
-    "gulp-if": "^2.0.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.3.1",
-    "gulp-sequence": "^0.4.5",
-    "gulp-typescript": "^2.13.5",
-    "gulp-uglify": "^1.5.3",
-    "gulp-util": "^3.0.7",
-    "lazypipe": "^1.0.1",
-    "merge2": "^1.0.2",
-    "sass-loader": "^3.2.0",
-    "script-loader": "^0.7.0",
-    "style-loader": "^0.13.1",
-    "typings": "^1.0.4",
-    "webpack-stream": "^3.2.0"
-  },
-  "dependencies": {
-    "auto-prop-component": "^1.0.1",
-    "cc-expiry": "^1.0.0",
-    "classnames": "^2.2.5",
-    "creditcardutils": "^1.0.0",
-    "lodash": "^4.13.1",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
-    "react-fontawesome": "^1.1.0",
-    "winjs": "^4.4.0",
-    "winjs-grid": "github:winjs/grid"
-  }
+    "name": "react-checkout",
+    "version": "2.0.0",
+    "description": "Shopify-style checkout and tracking pages as React components.",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "prepublishOnly": "npm run build",
+        "build": "tsc -p .",
+        "css": "stylus ./src/styles/react-checkout.styl -o ./dist/styles/react-checkout.css"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nozzlegear/react-checkout.git"
+    },
+    "keywords": [
+        "shopify",
+        "react",
+        "component",
+        "nozzlegear"
+    ],
+    "author": "Joshua Harms <joshua@nozzlegear.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/nozzlegear/react-checkout/issues"
+    },
+    "homepage": "https://github.com/nozzlegear/react-checkout#readme",
+    "devDependencies": {
+        "@types/creditcardutils": "https://github.com/nozzlegear/creditcardutils.d.ts",
+        "@types/node-uuid": "^0.0.28",
+        "@types/react": "^16.4.13",
+        "@types/react-dom": "^16.0.7",
+        "barrelsby": "^1.0.2",
+        "creditcardutils.d.ts": "https://github.com/nozzlegear/creditcardutils.d.ts",
+        "stylus": "^0.54.5",
+        "typescript": "3"
+    },
+    "dependencies": {
+        "@nozzlegear/railway": "^1.1.1",
+        "cc-expiry": "^1.0.0",
+        "classnames": "^2.2.5",
+        "creditcardutils": "^1.0.0",
+        "node-uuid": "^1.4.8",
+        "react": "^15.1.0",
+        "react-fontawesome": "^1.1.0",
+        "winjs": "^4.4.0",
+        "winjs-grid": "github:winjs/grid"
+    }
 }

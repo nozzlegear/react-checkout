@@ -34,3 +34,6 @@ node_modules
 
 # Ignore vendor Typescript declarations
 typings/
+
+# Ignore built files 
+dist
