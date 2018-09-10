@@ -4,10 +4,14 @@
     "description": "Shopify-style checkout and tracking pages as React components.",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "src"
+    ],
     "scripts": {
         "prepublishOnly": "npm run build",
-        "build": "tsc -p .",
-        "css": "stylus ./src/styles/react-checkout.styl -o ./dist/styles/react-checkout.css"
+        "build": "tsc -p . && npm run css",
+        "css": "mkdirp ./dist/styles && stylus ./src/styles/react-checkout.styl -o ./dist/styles/react-checkout.css"
     },
     "repository": {
         "type": "git",
@@ -32,6 +36,7 @@
         "@types/react-dom": "^16.0.7",
         "barrelsby": "^1.0.2",
         "creditcardutils.d.ts": "https://github.com/nozzlegear/creditcardutils.d.ts",
+        "mkdirp": "^0.5.1",
         "stylus": "^0.54.5",
         "typescript": "3"
     },
