@@ -26,6 +26,10 @@ export interface CheckoutPageProps extends React.Props<any> {
     allowCoupons?: boolean;
     siteName: string;
     supportEmail: string;
+    backToCart: {
+        url: string;
+        onClick?: () => void;
+    };
 }
 
 interface CheckoutPageState {
@@ -196,6 +200,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
 
     private generateHeader(forMobile: boolean = false) {
         const currentPage = this.state.page;
+        const { backToCart } = this.props;
 
         const navigate = (to: "customer" | "shipping") => (event: React.MouseEvent) => {
             event.preventDefault();
@@ -225,12 +230,22 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             return output;
         };
 
+        function handleBackToCart(this: void, e: React.MouseEvent<any>) {
+            if (typeof backToCart.onClick === "function") {
+                e.preventDefault();
+
+                backToCart.onClick();
+            }
+        }
+
         return (
             <Container>
                 <h1 className="page-title">{this.props.siteName}</h1>
                 <ul id="nav">
                     <li>
-                        <a href="/cart">{"Cart"}</a>
+                        <a href={backToCart.url} onClick={e => handleBackToCart(e)}>
+                            {"Cart"}
+                        </a>
                     </li>
                     <li className="chevron">
                         <FontAwesome name="chevron-right" className="fa-one-rem" />
