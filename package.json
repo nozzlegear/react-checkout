@@ -31,24 +31,20 @@
     "homepage": "https://github.com/nozzlegear/react-checkout#readme",
     "devDependencies": {
         "@types/creditcardutils": "https://github.com/nozzlegear/creditcardutils.d.ts",
-        "@types/node-uuid": "^0.0.28",
         "@types/react": "^16.4.13",
         "@types/react-dom": "^16.0.7",
         "barrelsby": "^1.0.2",
-        "creditcardutils.d.ts": "https://github.com/nozzlegear/creditcardutils.d.ts",
         "mkdirp": "^0.5.1",
         "stylus": "^0.54.5",
-        "typescript": "3"
+        "typescript": "3",
+        "winjs-grid": "github:winjs/grid"
     },
     "dependencies": {
         "@nozzlegear/railway": "^1.1.1",
         "cc-expiry": "^1.0.0",
         "classnames": "^2.2.5",
         "creditcardutils": "^1.0.0",
-        "node-uuid": "^1.4.8",
         "react": "^15.1.0",
-        "react-fontawesome": "^1.1.0",
-        "winjs": "^4.4.0",
-        "winjs-grid": "github:winjs/grid"
+        "react-fontawesome": "^1.1.0"
     }
 }

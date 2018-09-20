@@ -6,15 +6,9 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@nozzlegear/railway/-/railway-1.1.1.tgz#1e9d3bf543a4c255b179636ca94965d938f4b379"
 
-"@types/creditcardutils@https://github.com/nozzlegear/creditcardutils.d.ts", "creditcardutils.d.ts@https://github.com/nozzlegear/creditcardutils.d.ts":
+"@types/creditcardutils@https://github.com/nozzlegear/creditcardutils.d.ts":
   version "1.0.0"
   resolved "https://github.com/nozzlegear/creditcardutils.d.ts#4b8fc6e0883532f3d7bab51392d8e1934e7297ac"
-
-"@types/node-uuid@^0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@types/node-uuid/-/node-uuid-0.0.28.tgz#41655b5ce63b2f3374c4e826b4dd21e729058e3d"
-  dependencies:
-    "@types/node" "*"
 
 "@types/node@*":
   version "10.9.4"
@@ -315,10 +309,6 @@ node-fetch@^1.0.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
-node-uuid@^1.4.8:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
-
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"
@@ -523,10 +513,6 @@ which@^1.2.9:
 "winjs-grid@github:winjs/grid":
   version "0.1.0"
   resolved "https://codeload.github.com/winjs/grid/tar.gz/431e0c05d4521da5f538877bd22a3649d2b335b3"
-
-winjs@^4.4.0:
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/winjs/-/winjs-4.4.3.tgz#085a105018ffe16f9797bf69bd9c1fd6d428ade3"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"
