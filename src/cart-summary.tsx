@@ -2,7 +2,7 @@ import * as React from "react";
 import * as classes from "classnames";
 import { LineItem, Coupon, Totals } from "./types";
 
-export interface IProps extends React.Props<any> {
+export interface CartSummaryProps extends React.Props<any> {
     totals: Totals;
 
     lineItems: LineItem[];
@@ -14,7 +14,7 @@ export interface IProps extends React.Props<any> {
     onRemoveDiscount?: (event: React.MouseEvent, coupon: Coupon) => void;
 }
 
-export function CartSummary(props: IProps) {
+export function CartSummary(props: CartSummaryProps) {
     const widths = ["xs-col-3-24", "xs-col-16-24 xs-col-24-offset-1", "xs-col-4-24"];
 
     const { totals, coupons } = props;

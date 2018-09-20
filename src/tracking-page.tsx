@@ -1,7 +1,7 @@
 import * as React from "react";
 
-interface Props extends React.Props<any> {}
+export interface TrackingPageProps extends React.Props<any> {}
 
-export function TrackingPage({  }: Props) {
+export function TrackingPage({  }: TrackingPageProps) {
     return <div />;
 }

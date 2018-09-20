@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Address } from "./types";
 
-export function AddressLine(props: { address: Address } & React.Props<any>) {
-    const { address } = props;
+export interface AddressLineProps extends React.Props<any> {
+    address: Address;
+}
 
+export function AddressLine({ address, children }: AddressLineProps) {
     return (
         <div className="address-line">
             <span>{address.Name}</span>
@@ -14,7 +16,7 @@ export function AddressLine(props: { address: Address } & React.Props<any>) {
                     ""} ${(!!address.Zip && address.Zip) || ""}`}
             </span>
             <span>{address.CountryCode}</span>
-            {props.children}
+            {children}
         </div>
     );
 }

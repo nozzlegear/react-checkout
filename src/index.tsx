@@ -7,35 +7,28 @@ import { Address, Coupon, LineItem, Totals } from "./types";
 import { Countries } from "./data/countries";
 import { CartSummary } from "./cart-summary";
 import { AddressLine } from "./address-line";
-import { v4 as guid } from "node-uuid";
 import { compute, Option } from "@nozzlegear/railway";
 
-declare var require: any;
-
-// if (true === false)
-// {
-//
-// }
-
-export enum page {
+enum page {
     customerInformation = 0,
     shippingMethod = 1,
     paymentMethod = 2
 }
 
-export interface IProps extends React.Props<any> {
+// Turn this module into a barrel by exporting all of the packages types
+export * from "./address-line";
+export * from "./cart-summary";
+export * from "./types";
+
+export interface CheckoutPageProps extends React.Props<any> {
     items: LineItem[];
-
     totals: Totals;
-
     allowCoupons?: boolean;
-
     siteName: string;
-
     supportEmail: string;
 }
 
-export interface IState {
+interface CheckoutPageState {
     page?: page;
 
     customer?: {
@@ -65,19 +58,19 @@ export interface IState {
     };
 }
 
-export class CheckoutPage extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
+export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPageState> {
+    constructor(props: CheckoutPageProps) {
         super(props);
 
         this.configureState(props, false);
     }
 
-    public state: IState;
+    public state: CheckoutPageState;
 
     // This is a static property to prevent items resizing on every re-render (selecting a form option, etc)
     private isMobile = window.innerWidth < 767;
 
-    private configureState(props: IProps, useSetState: boolean) {
+    private configureState(props: CheckoutPageProps, useSetState: boolean) {
         const usa = Countries.filter(c => c.iso === "US")[0];
 
         let defaultAddress: Address = {
@@ -90,7 +83,7 @@ export class CheckoutPage extends React.Component<IProps, IState> {
             Zip: undefined
         };
 
-        let state: IState = {
+        let state: CheckoutPageState = {
             customer: {
                 error: undefined,
                 email: undefined,
@@ -126,7 +119,7 @@ export class CheckoutPage extends React.Component<IProps, IState> {
     }
 
     updateStateFromEvent: (
-        callback: (state: IState, value: string) => void
+        callback: (state: CheckoutPageState, value: string) => void
     ) => (event: React.FormEvent<any>) => void = callback => {
         return event => {
             const value: string = event.currentTarget.value;
@@ -323,9 +316,9 @@ export class CheckoutPage extends React.Component<IProps, IState> {
         /**
          * A function accessor that returns the correct prop depending on the address type.
          */
-        const accessor = (s: IState) => {
+        const accessor = (s: CheckoutPageState) => {
             //Ensure the given state has both payment.billingAddress and customer.shippingAddress props
-            const state = compute<IState>(() => {
+            const state = compute<CheckoutPageState>(() => {
                 let output = { ...s };
 
                 if (!output.payment) {
@@ -350,7 +343,7 @@ export class CheckoutPage extends React.Component<IProps, IState> {
         /**
          * A function for selecting a new country and performing maintenance on its Zip and StateCode props.
          */
-        const updateCountry = (s: IState, iso: string) => {
+        const updateCountry = (s: CheckoutPageState, iso: string) => {
             const countryData = Countries.filter(c => c.iso === iso)[0];
             let address = accessor(s);
 
@@ -378,7 +371,7 @@ export class CheckoutPage extends React.Component<IProps, IState> {
             </option>
         ));
         const states = countryData.states.map(s => (
-            <option key={guid()} value={s.iso}>
+            <option key={s.iso} value={s.iso}>
                 {s.name}
             </option>
         ));
@@ -680,7 +673,12 @@ export class CheckoutPage extends React.Component<IProps, IState> {
                         <button className="win-button win-button-primary" onClick={e => this.completeOrder(e)}>
                             {loading
                                 ? [
-                                      <FontAwesome key={guid()} name="spinner" className="marRight5" spin />,
+                                      <FontAwesome
+                                          key={"placing-order-spinner"}
+                                          name="spinner"
+                                          className="marRight5"
+                                          spin
+                                      />,
                                       "Placing order"
                                   ]
                                 : "Complete order"}
@@ -780,14 +778,14 @@ export class CheckoutPage extends React.Component<IProps, IState> {
 
     //#endregion
 
-    public componentWillUpdate(newProps: IProps, newState: IState) {
+    public componentWillUpdate(newProps: CheckoutPageProps, newState: CheckoutPageState) {
         if (newState.page != this.state.page) {
             //Page changed, remove the coupon error
             newState.summary.error = undefined;
         }
     }
 
-    public componentWillReceiveProps(props: IProps) {
+    public componentWillReceiveProps(props: CheckoutPageProps) {
         this.configureState(props, true);
     }
 
