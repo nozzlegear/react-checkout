@@ -11,7 +11,7 @@
     "scripts": {
         "prepublishOnly": "npm run build",
         "build": "tsc -p . && npm run css",
-        "css": "mkdirp ./dist/styles && stylus ./src/styles/react-checkout.styl -o ./dist/styles/react-checkout.css"
+        "css": "mkdirp ./dist/styles && stylus --include-css ./src/styles/react-checkout.styl -o ./dist/styles/react-checkout.css"
     },
     "repository": {
         "type": "git",

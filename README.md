@@ -7,9 +7,9 @@ Shopify-style checkout and tracking page as React components.
 
 ---
 
-### Dependencies
+### CSS
 
-React Checkout currently requires the following two dependencies to work:
+React Checkout currently requires that you load the following CSS manually:
 
 1. FontAwesome CSS and font files included on the page.
-2. [WinJS-Grid](https://github.com/winjs/grid) CSS included on the page. This dependency will be removed in the future.
+2. The react-checkout.css file, located at `node_modules/@nozzlegear/react-checkout/dist/styles/react-checkout.css`
