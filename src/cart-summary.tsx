@@ -22,21 +22,21 @@ export function CartSummary(props: CartSummaryProps) {
     const items = props.lineItems.map((item, index) => (
         <div className="ms-row vc zero-margin cart-item" key={`line-item-${index}`}>
             <div className={widths[0]}>
-                <img className="img-responsive" src={item.ThumbnailUrl} />
+                <img className="img-responsive" src={item.thumbnailUrl} />
             </div>
-            <div className={classes(widths[1], "win-ellipses")}>{`${item.Quantity} — ${item.Title}`}</div>
-            <div className={classes(widths[2], "text-right")}>{`$${item.Total.toFixed(2)}`}</div>
+            <div className={classes(widths[1], "win-ellipses")}>{`${item.quantity} — ${item.title}`}</div>
+            <div className={classes(widths[2], "text-right")}>{`$${item.total.toFixed(2)}`}</div>
         </div>
     ));
     const couponLines = coupons.map(coupon => (
-        <div key={coupon.Id} className="ms-row vc zero-margin subtotal">
+        <div key={coupon.id} className="ms-row vc zero-margin subtotal">
             <div className="xs-col-18-24">
                 {!props.controls ? null : (
                     <a href="#" title="Remove coupon" onClick={e => props.onRemoveDiscount(e, coupon)}>
                         <i className="fa fa-close fa-one-rem marRight5" />
                     </a>
                 )}
-                {`${coupon.Code} — ${coupon.PercentOff}% off`}
+                {`${coupon.code} — ${coupon.percentOff}% off`}
             </div>
             <div className="xs-col-6-24 text-right">{`-$${totals.discountTotal.toFixed(2)}`}</div>
         </div>

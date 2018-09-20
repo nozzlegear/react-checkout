@@ -1,27 +1,27 @@
 export interface Address {
-    City: string;
-    CountryCode: string;
-    Line1: string;
-    Line2: string;
-    StateCode: string;
-    Zip: string;
-    Name: string;
+    city: string;
+    countryCode: string;
+    line1: string;
+    line2: string;
+    stateCode: string;
+    zip: string;
+    name: string;
 }
 
 export interface LineItem {
-    Title: string;
-    Total: number;
-    Quantity: number;
-    ThumbnailUrl: string;
+    title: string;
+    total: number;
+    quantity: number;
+    thumbnailUrl: string;
 }
 
 export interface Coupon {
-    Id?: number;
-    Code: string;
-    Created?: Date | string;
-    PercentOff: number;
-    TimesRedeemed?: number;
-    Expiration?: Date | string;
+    id?: number;
+    code: string;
+    created?: Date | string;
+    percentOff: number;
+    timesRedeemed?: number;
+    expiration?: Date | string;
 }
 
 export interface Totals {

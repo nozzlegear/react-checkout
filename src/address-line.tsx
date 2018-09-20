@@ -8,14 +8,14 @@ export interface AddressLineProps extends React.Props<any> {
 export function AddressLine({ address, children }: AddressLineProps) {
     return (
         <div className="address-line">
-            <span>{address.Name}</span>
-            <span>{`${address.Line1} ${address.Line2 || ""}`}</span>
+            <span>{address.name}</span>
+            <span>{`${address.line1} ${address.line2 || ""}`}</span>
             <span>
-                {`${address.City + (!!address.StateCode && address.StateCode ? "," : "")} ${(!!address.StateCode &&
-                    address.StateCode) ||
-                    ""} ${(!!address.Zip && address.Zip) || ""}`}
+                {`${address.city + (!!address.stateCode && address.stateCode ? "," : "")} ${(!!address.stateCode &&
+                    address.stateCode) ||
+                    ""} ${(!!address.zip && address.zip) || ""}`}
             </span>
-            <span>{address.CountryCode}</span>
+            <span>{address.countryCode}</span>
             {children}
         </div>
     );

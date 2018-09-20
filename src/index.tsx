@@ -78,13 +78,13 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         const usa = Countries.filter(c => c.iso === "US")[0];
 
         let defaultAddress: Address = {
-            City: undefined,
-            CountryCode: usa.iso,
-            Line1: undefined,
-            Line2: undefined,
-            Name: undefined,
-            StateCode: usa.states[0].iso,
-            Zip: undefined
+            city: undefined,
+            countryCode: usa.iso,
+            line1: undefined,
+            line2: undefined,
+            name: undefined,
+            stateCode: usa.states[0].iso,
+            zip: undefined
         };
 
         let state: CheckoutPageState = {
@@ -141,7 +141,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             message: undefined
         };
 
-        const filteredCountries = Countries.filter(c => c.iso === address.CountryCode);
+        const filteredCountries = Countries.filter(c => c.iso === address.countryCode);
 
         // Ensure customer has selected a valid country
         if (filteredCountries.length === 0) {
@@ -154,26 +154,26 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
 
         if (countryData.states.length > 0) {
             // Ensure the selected state exists in the list of the country's states
-            if (!countryData.states.some(s => s.iso === address.StateCode)) {
+            if (!countryData.states.some(s => s.iso === address.stateCode)) {
                 output.message = "You must select a valid state.";
 
                 return output;
             }
         }
 
-        if (!address.City) {
+        if (!address.city) {
             output.message = "You must enter a city.";
 
             return output;
         }
 
-        if (!address.Line1) {
+        if (!address.line1) {
             output.message = "You must enter a street address.";
 
             return output;
         }
 
-        if (!address.Name) {
+        if (!address.name) {
             output.message = "You must enter a name or company name for this address.";
 
             return output;
@@ -182,7 +182,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         if (
             countryData.hasPostalCodes &&
             countryData.zipRegex !== 0 &&
-            !new RegExp(countryData.zipRegex as string).test(address.Zip)
+            !new RegExp(countryData.zipRegex as string).test(address.zip)
         ) {
             output.message = "You must enter a valid Zip or Postal code.";
 
@@ -284,7 +284,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         const {
             summary: { loading, error, coupons, code },
             customer: {
-                shippingAddress: { CountryCode }
+                shippingAddress: { countryCode }
             }
         } = this.state;
 
@@ -362,24 +362,24 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             const countryData = Countries.filter(c => c.iso === iso)[0];
             let address = accessor(s);
 
-            address.CountryCode = iso;
+            address.countryCode = iso;
 
             //If the country has states, select the first one. If not, delete the state
             if (countryData.states.length > 0) {
-                address.StateCode = countryData.states[0].iso;
+                address.stateCode = countryData.states[0].iso;
             } else {
-                address.StateCode = undefined;
+                address.stateCode = undefined;
             }
 
             //If the country doesn't have postal codes, delete it.
             if (countryData.hasPostalCodes === false) {
-                address.Zip = undefined;
+                address.zip = undefined;
             }
         };
 
         const address = accessor(this.state);
-        const { StateCode, CountryCode } = address;
-        const countryData = Countries.filter(c => c.iso === CountryCode)[0];
+        const { stateCode, countryCode } = address;
+        const countryData = Countries.filter(c => c.iso === countryCode)[0];
         const countries = Countries.map(c => (
             <option key={c.iso} value={c.iso}>
                 {c.name}
@@ -398,8 +398,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                         className="win-textbox"
                         type="text"
                         placeholder="Name or company name"
-                        value={address.Name}
-                        onChange={this.updateStateFromEvent((s, v) => (accessor(s).Name = v))}
+                        value={address.name}
+                        onChange={this.updateStateFromEvent((s, v) => (accessor(s).name = v))}
                     />
                     <div className="ms-row vc">
                         <div className="m-col-16-24">
@@ -407,8 +407,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                 className="win-textbox"
                                 type="text"
                                 placeholder="Address"
-                                value={address.Line1}
-                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).Line1 = v))}
+                                value={address.line1}
+                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).line1 = v))}
                             />
                         </div>
                         <div className="m-col-8-24">
@@ -416,8 +416,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                 className="win-textbox"
                                 type="text"
                                 placeholder="Apt, suite, etc. (optional)"
-                                value={address.Line2}
-                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).Line2 = v))}
+                                value={address.line2}
+                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).line2 = v))}
                             />
                         </div>
                     </div>
@@ -427,8 +427,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                 className="win-textbox"
                                 type="text"
                                 placeholder="City"
-                                value={address.City}
-                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).City = v))}
+                                value={address.city}
+                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).city = v))}
                             />
                         </div>
                     </div>
@@ -439,7 +439,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                             }-24`}>
                             <select
                                 className="win-select"
-                                value={CountryCode}
+                                value={countryCode}
                                 onChange={this.updateStateFromEvent(updateCountry)}>
                                 {countries}
                             </select>
@@ -448,8 +448,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                             <div className="m-col-8-24">
                                 <select
                                     className="win-select"
-                                    value={StateCode}
-                                    onChange={this.updateStateFromEvent((s, v) => (accessor(s).StateCode = v))}>
+                                    value={stateCode}
+                                    onChange={this.updateStateFromEvent((s, v) => (accessor(s).stateCode = v))}>
                                     {states}
                                 </select>
                             </div>
@@ -460,8 +460,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                     className="win-textbox"
                                     type="text"
                                     placeholder="Postal code"
-                                    value={address.Zip}
-                                    onChange={this.updateStateFromEvent((s, v) => (accessor(s).Zip = v))}
+                                    value={address.zip}
+                                    onChange={this.updateStateFromEvent((s, v) => (accessor(s).zip = v))}
                                 />
                             </div>
                         )}
@@ -525,7 +525,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         };
 
         const address = this.state.customer.shippingAddress;
-        const country = Countries.filter(c => c.iso === address.CountryCode)[0];
+        const country = Countries.filter(c => c.iso === address.countryCode)[0];
 
         return (
             <section id="shipping-information">
@@ -546,7 +546,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                 <input type="radio" className="win-radio" checked={true} />
                             </div>
                             <div className="xs-col-12-24">
-                                {address.CountryCode === "US" ? "Standard Shipping" : "International Shipping"}
+                                {address.countryCode === "US" ? "Standard Shipping" : "International Shipping"}
                             </div>
                             <div className="xs-col-9-24 text-right">
                                 {`USD $${this.props.totals.shippingTotal.toFixed(2)}`}
