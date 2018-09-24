@@ -381,9 +381,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                     {r.name}
                                 </div>,
                                 <div key={`${r.id}-value`} className="xs-col-9-24 text-right">
-                                    {this.state.selectedRate
-                                        .map(rate => (r.value === 0 ? "Free" : `$${rate.value.toFixed(2)}`))
-                                        .defaultValue("")}
+                                    {r.value === 0 ? "Free" : `$${r.value.toFixed(2)}`}
                                 </div>
                             ])}
                         </div>
