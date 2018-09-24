@@ -1,6 +1,6 @@
 {
     "name": "@nozzlegear/react-checkout",
-    "version": "3.0.0-beta4",
+    "version": "3.0.0-beta5",
     "description": "Shopify-style checkout and tracking pages as React components.",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
