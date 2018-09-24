@@ -592,7 +592,12 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                 });
             })
             .iterError(error => {
-                const message = error instanceof Error ? error.message : `Encountered unknown error: ${error}`;
+                const message =
+                    error instanceof Error
+                        ? error.message
+                        : typeof error === "string"
+                            ? error
+                            : `Encountered unknown error: ${error}`;
 
                 console.error("onCalculateShipping promise threw an error.", { message, error: error });
                 this.setState({ error: Option.ofSome(message), loading: false });
@@ -652,7 +657,12 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             )
             .iter(result => window.location.assign(result.url))
             .iterError(error => {
-                const message = error instanceof Error ? error.message : `Encountered unknown error: ${error}`;
+                const message =
+                    error instanceof Error
+                        ? error.message
+                        : typeof error === "string"
+                            ? error
+                            : `Encountered unknown error: ${error}`;
 
                 console.error("onCofirmPayment promise threw an error.", { message, error: error });
                 this.setState({ error: Option.ofSome(message), loading: false });
