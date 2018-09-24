@@ -573,7 +573,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             .iter(rates => {
                 this.setState({
                     rates,
-                    selectedRate: rates.length > 0 ? Option.ofSome(rates[0]) : Option.ofNone()
+                    selectedRate: rates.length > 0 ? Option.ofSome(rates[0]) : Option.ofNone(),
+                    page: page.shippingMethod
                 });
             })
             .iterError(error => {
