@@ -351,8 +351,6 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             });
         };
 
-        console.log("Attempting to map shipping rates", { rates: this.state.rates });
-
         return (
             <section id="shipping-information">
                 {this.generateHeader()}
@@ -369,28 +367,23 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                         <label className="control-label">{"Shipping method"}</label>
                         <div id="shipping-method" className="ms-row vc zero-margin">
                             {this.state.rates.map(r => [
-                                // <div key={`${r.id}-radio`} className="xs-col-2-24">
-                                //     <input
-                                //         type="radio"
-                                //         className="win-radio"
-                                //         name="shipping-method"
-                                //         value={r.id}
-                                //         checked={this.state.selectedRate.map(s => s.id).defaultValue("") === r.id}
-                                //         onChange={selectRate}
-                                //     />
-                                // </div>,
+                                <div key={`${r.id}-radio`} className="xs-col-2-24">
+                                    <input
+                                        type="radio"
+                                        className="win-radio"
+                                        name="shipping-method"
+                                        value={r.id}
+                                        checked={this.state.selectedRate.map(s => s.id).defaultValue("") === r.id}
+                                        onChange={selectRate}
+                                    />
+                                </div>,
                                 <div key={`${r.id}-name`} className="xs-col-12-24">
                                     {r.name}
                                 </div>,
                                 <div key={`${r.id}-value`} className="xs-col-9-24 text-right">
-                                    {this.state.selectedRate.map(
-                                        rate =>
-                                            r.value === 0
-                                                ? "Free"
-                                                : `$${this.props.totals.currency.toUpperCase()} ${rate.value.toFixed(
-                                                      2
-                                                  )}`
-                                    )}
+                                    {this.state.selectedRate
+                                        .map(rate => (r.value === 0 ? "Free" : `$${rate.value.toFixed(2)}`))
+                                        .defaultValue("")}
                                 </div>
                             ])}
                         </div>
