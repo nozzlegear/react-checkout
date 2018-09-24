@@ -343,7 +343,13 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         };
 
         const address = this.state.shippingAddress;
-        const country = Countries.filter(c => c.iso === address.countryCode)[0];
+        const selectRate = (e: React.FormEvent<HTMLInputElement>) => {
+            const rate = this.state.rates.find(r => r.id === e.currentTarget.value);
+
+            this.setState({
+                selectedRate: rate ? Option.ofSome(rate) : Option.ofNone()
+            });
+        };
 
         return (
             <section id="shipping-information">
@@ -360,17 +366,31 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                     <div className="form-group">
                         <label className="control-label">{"Shipping method"}</label>
                         <div id="shipping-method" className="ms-row vc zero-margin">
-                            <div className="xs-col-2-24">
-                                <input type="radio" className="win-radio" checked={true} />
-                            </div>
-                            <div className="xs-col-12-24">
-                                {address.countryCode === "US" ? "Standard Shipping" : "International Shipping"}
-                            </div>
-                            <div className="xs-col-9-24 text-right">
-                                {this.state.selectedRate.map(
-                                    rate => `$${this.props.totals.currency.toUpperCase()} ${rate.value.toFixed(2)}`
-                                )}
-                            </div>
+                            {this.state.rates.map(r => [
+                                <div key={`${r.id}-radio`} className="xs-col-2-24">
+                                    <input
+                                        type="radio"
+                                        className="win-radio"
+                                        name="shipping-method"
+                                        value={r.id}
+                                        checked={this.state.selectedRate.map(s => s.id).defaultValue("") === r.id}
+                                        onChange={selectRate}
+                                    />
+                                </div>,
+                                <div key={`${r.id}-name`} className="xs-col-12-24">
+                                    {r.name}
+                                </div>,
+                                <div key={`${r.id}-value`} className="xs-col-9-24 text-right">
+                                    {this.state.selectedRate.map(
+                                        rate =>
+                                            r.value === 0
+                                                ? "Free"
+                                                : `$${this.props.totals.currency.toUpperCase()} ${rate.value.toFixed(
+                                                      2
+                                                  )}`
+                                    )}
+                                </div>
+                            ])}
                         </div>
                     </div>
                 </form>
