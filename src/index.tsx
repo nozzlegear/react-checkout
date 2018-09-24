@@ -587,7 +587,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                 this.setState({
                     rates,
                     selectedRate: rates.length > 0 ? Option.ofSome(rates[0]) : Option.ofNone(),
-                    page: page.shippingMethod
+                    page: page.shippingMethod,
+                    loading: false
                 });
             })
             .iterError(error => {
@@ -602,7 +603,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
     private continueToPayment(event: React.MouseEvent) {
         event.preventDefault();
 
-        this.setState({ page: page.paymentMethod });
+        this.setState({ page: page.paymentMethod, loading: false });
     }
 
     private async completeOrder(event: React.MouseEvent) {
