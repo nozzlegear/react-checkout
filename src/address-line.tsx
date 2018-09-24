@@ -6,15 +6,13 @@ export interface AddressLineProps extends React.Props<any> {
 }
 
 export function AddressLine({ address, children }: AddressLineProps) {
+    const cityAndState = address.stateCode.map(stateCode => address.city + ", " + stateCode).defaultValue(address.city);
+
     return (
         <div className="address-line">
             <span>{address.name}</span>
-            <span>{`${address.line1} ${address.line2 || ""}`}</span>
-            <span>
-                {`${address.city + (!!address.stateCode && address.stateCode ? "," : "")} ${(!!address.stateCode &&
-                    address.stateCode) ||
-                    ""} ${(!!address.zip && address.zip) || ""}`}
-            </span>
+            <span>{`${address.line1} ${address.line2}`}</span>
+            <span>{`${cityAndState} ${address.zip.defaultValue("")}`}</span>
             <span>{address.countryCode}</span>
             {children}
         </div>
