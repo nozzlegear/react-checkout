@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@nozzlegear/railway@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@nozzlegear/railway/-/railway-1.1.1.tgz#1e9d3bf543a4c255b179636ca94965d938f4b379"
+"@nozzlegear/railway@2":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@nozzlegear/railway/-/railway-2.0.0.tgz#84fcd370e86b719d254038c940d3dcfa69089b9e"
 
 "@types/creditcardutils@https://github.com/nozzlegear/creditcardutils.d.ts":
   version "1.0.0"

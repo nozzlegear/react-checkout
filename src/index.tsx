@@ -3,11 +3,11 @@ import * as classes from "classnames";
 import * as creditcard from "creditcardutils";
 import FontAwesome = require("react-fontawesome");
 import { format as formatExpiry } from "cc-expiry";
-import { Address, Coupon, LineItem, Totals } from "./types";
+import { Address, Coupon, LineItem, Totals, Card, ShippingRate } from "./types";
 import { Countries } from "./data/countries";
 import { CartSummary } from "./cart-summary";
 import { AddressLine } from "./address-line";
-import { compute, Option } from "@nozzlegear/railway";
+import { compute, Option, AsyncResult } from "@nozzlegear/railway";
 
 enum page {
     customerInformation = 0,
@@ -30,97 +30,69 @@ export interface CheckoutPageProps extends React.Props<any> {
         url: string;
         onClick?: () => void;
     };
+    onApplyCoupon?: (code: string) => AsyncResult<Coupon>;
+    onCalculateShipping: (address: Address) => AsyncResult<ShippingRate[]>;
+    onConfirmPayment: (
+        card: Card,
+        shippingRate: Option<ShippingRate>,
+        coupons: Coupon[],
+        billingAddress: Option<Address>
+    ) => AsyncResult<{ url: string }>;
 }
 
 interface CheckoutPageState {
-    page?: page;
-
-    customer?: {
-        email?: string;
-        shippingAddress?: Address;
-        error?: string;
-    };
-
-    summary?: {
-        loading?: boolean;
-        error?: string;
-        code?: string;
-        coupons?: Coupon[];
-    };
-
-    payment?: {
-        loading?: boolean;
-        sameBillingAddress?: boolean;
-        error?: string;
-        card?: {
-            number?: string;
-            name?: string;
-            expiry?: string;
-            cvv?: string;
-        };
-        billingAddress?: Address;
-    };
+    page: page;
+    loading: boolean;
+    error: Option<string>;
+    rates: ShippingRate[];
+    selectedRate: Option<ShippingRate>;
+    email: string;
+    shippingAddress: Address;
+    discountCode: Option<string>;
+    coupons: Coupon[];
+    sameBillingAddress: boolean;
+    card: Card;
+    billingAddress: Address;
 }
 
 export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPageState> {
-    constructor(props: CheckoutPageProps) {
-        super(props);
+    constructor(props: CheckoutPageProps, context: unknown) {
+        super(props, context);
 
-        this.configureState(props, false);
-    }
-
-    public state: CheckoutPageState;
-
-    // This is a static property to prevent items resizing on every re-render (selecting a form option, etc)
-    private isMobile = window.innerWidth < 767;
-
-    private configureState(props: CheckoutPageProps, useSetState: boolean) {
         const usa = Countries.filter(c => c.iso === "US")[0];
 
         let defaultAddress: Address = {
-            city: undefined,
+            city: "",
             countryCode: usa.iso,
-            line1: undefined,
-            line2: undefined,
-            name: undefined,
-            stateCode: usa.states[0].iso,
-            zip: undefined
+            line1: "",
+            line2: "",
+            name: "",
+            stateCode: Option.ofSome(usa.states[0].iso),
+            zip: Option.ofSome("")
         };
 
-        let state: CheckoutPageState = {
-            customer: {
-                error: undefined,
-                email: undefined,
-                shippingAddress: defaultAddress
-            },
-            summary: {
-                coupons: [],
-                error: undefined,
-                loading: false
-            },
+        this.state = {
             page: page.customerInformation,
-            payment: {
-                error: undefined,
-                loading: false,
-                sameBillingAddress: true,
-                card: {
-                    number: undefined,
-                    name: undefined,
-                    expiry: undefined,
-                    cvv: undefined
-                },
-                billingAddress: defaultAddress
-            }
+            email: "",
+            shippingAddress: defaultAddress,
+            billingAddress: defaultAddress,
+            selectedRate: Option.ofNone(),
+            card: {
+                number: "",
+                cvv: "",
+                expiry: "",
+                name: ""
+            },
+            coupons: [],
+            discountCode: Option.ofNone(),
+            error: Option.ofNone(),
+            loading: false,
+            rates: [],
+            sameBillingAddress: false
         };
-
-        if (!useSetState) {
-            this.state = state;
-
-            return;
-        }
-
-        this.setState(state);
     }
+
+    state: CheckoutPageState;
 
     updateStateFromEvent: (
         callback: (state: CheckoutPageState, value: string) => void
@@ -135,68 +107,47 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         };
     };
 
-    private validateAddress(address: Address) {
-        let output = {
-            success: false,
-            message: undefined
-        };
-
+    /**
+     * Validates an address, returning Option.Some with an error message when validation fails.
+     */
+    private validateAddress(address: Address): Option<string> {
         const filteredCountries = Countries.filter(c => c.iso === address.countryCode);
 
         // Ensure customer has selected a valid country
         if (filteredCountries.length === 0) {
-            output.message = "You must select a valid country.";
-
-            return output;
+            return Option.ofSome("You must select a valid country.");
         }
 
         const countryData = filteredCountries[0];
 
         if (countryData.states.length > 0) {
             // Ensure the selected state exists in the list of the country's states
-            if (!countryData.states.some(s => s.iso === address.stateCode)) {
-                output.message = "You must select a valid state.";
-
-                return output;
+            if (!countryData.states.some(s => s.iso === address.stateCode.defaultValue(""))) {
+                return Option.ofSome("You must select a valid state.");
             }
         }
 
         if (!address.city) {
-            output.message = "You must enter a city.";
-
-            return output;
+            return Option.ofSome("You must enter a city.");
         }
 
         if (!address.line1) {
-            output.message = "You must enter a street address.";
-
-            return output;
+            return Option.ofSome("You must enter a street address.");
         }
 
         if (!address.name) {
-            output.message = "You must enter a name or company name for this address.";
-
-            return output;
+            return Option.ofSome("You must enter a name or company name for this address.");
         }
 
-        if (
-            countryData.hasPostalCodes &&
-            countryData.zipRegex !== 0 &&
-            !new RegExp(countryData.zipRegex as string).test(address.zip)
-        ) {
-            output.message = "You must enter a valid Zip or Postal code.";
-
-            return output;
+        if (typeof countryData.zipRegex === "number" || countryData.hasPostalCodes === false) {
+            return Option.ofNone();
         }
 
-        output.success = true;
+        const regex = countryData.zipRegex;
+        const passesRegex = address.zip.map(z => new RegExp(regex).test(z)).defaultValue(false);
 
-        return output;
+        return passesRegex ? Option.ofNone() : Option.ofSome("You must enter a valid ZIP or Postal code.");
     }
-
-    //#endregion
-
-    //#region Component generators
 
     private generateHeader(forMobile: boolean = false) {
         const currentPage = this.state.page;
@@ -282,43 +233,52 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
 
     private generateCartSummary() {
         const {
-            summary: { loading, error, coupons, code },
-            customer: {
-                shippingAddress: { countryCode }
-            }
+            loading,
+            error,
+            coupons,
+            discountCode,
+            shippingAddress: { countryCode }
         } = this.state;
 
         const setSummaryCode = (event: React.FormEvent<any>) => {
             const value = event.currentTarget.value;
 
-            this.setState({ summary: { ...this.state.summary, code: value } });
+            this.setState({ discountCode: value });
         };
 
-        const controls = (
-            <div>
-                <div className="ms-row vc zero-margin discount-form">
-                    <div className="xs-col-18-24 form-group" style={{ marginBottom: "0px" }}>
-                        <input
-                            className="win-textbox"
-                            placeholder="Discount Code"
-                            value={code}
-                            onChange={e => setSummaryCode(e)}
-                        />
-                    </div>
-                    <div className="xs-col-6-24 text-center">
-                        <button className="win-button" onClick={e => this.applyDiscount(e)}>
-                            {loading ? <FontAwesome key={"apply-discount-spinner"} name="spinner" spin /> : "Apply"}
-                        </button>
-                    </div>
-                </div>
-                {error ? <p className="error red">{error}</p> : null}
-                <hr />
-            </div>
-        );
+        const controls =
+            this.props.allowCoupons === true
+                ? Option.ofSome(
+                      <div>
+                          <div className="ms-row vc zero-margin discount-form">
+                              <div className="xs-col-18-24 form-group" style={{ marginBottom: "0px" }}>
+                                  <input
+                                      className="win-textbox"
+                                      placeholder="Discount Code"
+                                      value={discountCode.defaultValue("")}
+                                      onChange={e => setSummaryCode(e)}
+                                  />
+                              </div>
+                              <div className="xs-col-6-24 text-center">
+                                  <button className="win-button" onClick={e => this.applyDiscount(e)}>
+                                      {loading ? (
+                                          <FontAwesome key={"apply-discount-spinner"} name="spinner" spin />
+                                      ) : (
+                                          "Apply"
+                                      )}
+                                  </button>
+                              </div>
+                          </div>
+                          {error ? <p className="error red">{error}</p> : null}
+                          <hr />
+                      </div>
+                  )
+                : Option.ofNone();
 
         return (
             <CartSummary
                 totals={this.props.totals}
+                shippingTotal={this.state.selectedRate.bind(r => Option.ofSome(r.value))}
                 coupons={coupons}
                 lineItems={this.props.items}
                 controls={controls}
@@ -327,154 +287,8 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         );
     }
 
-    private generateAddressForm(type: "billing" | "shipping") {
-        /**
-         * A function accessor that returns the correct prop depending on the address type.
-         */
-        const accessor = (s: CheckoutPageState) => {
-            //Ensure the given state has both payment.billingAddress and customer.shippingAddress props
-            const state = compute<CheckoutPageState>(() => {
-                let output = { ...s };
-
-                if (!output.payment) {
-                    output.payment = { billingAddress: {} as any };
-                }
-
-                if (!output.customer) {
-                    output.customer = { shippingAddress: {} as any };
-                }
-
-                return output;
-            });
-
-            const paymentBillingAddress: Partial<Address> =
-                s.payment && s.payment.billingAddress ? s.payment.billingAddress : {};
-            const customerShippingAddress: Partial<Address> =
-                s.customer && s.customer.shippingAddress ? s.customer.shippingAddress : {};
-
-            return type === "billing" ? paymentBillingAddress : customerShippingAddress;
-        };
-
-        /**
-         * A function for selecting a new country and performing maintenance on its Zip and StateCode props.
-         */
-        const updateCountry = (s: CheckoutPageState, iso: string) => {
-            const countryData = Countries.filter(c => c.iso === iso)[0];
-            let address = accessor(s);
-
-            address.countryCode = iso;
-
-            //If the country has states, select the first one. If not, delete the state
-            if (countryData.states.length > 0) {
-                address.stateCode = countryData.states[0].iso;
-            } else {
-                address.stateCode = undefined;
-            }
-
-            //If the country doesn't have postal codes, delete it.
-            if (countryData.hasPostalCodes === false) {
-                address.zip = undefined;
-            }
-        };
-
-        const address = accessor(this.state);
-        const { stateCode, countryCode } = address;
-        const countryData = Countries.filter(c => c.iso === countryCode)[0];
-        const countries = Countries.map(c => (
-            <option key={c.iso} value={c.iso}>
-                {c.name}
-            </option>
-        ));
-        const states = countryData.states.map(s => (
-            <option key={s.iso} value={s.iso}>
-                {s.name}
-            </option>
-        ));
-
-        return (
-            <div className="address-form form-container ms-row">
-                <div className="xs-col-24-24">
-                    <input
-                        className="win-textbox"
-                        type="text"
-                        placeholder="Name or company name"
-                        value={address.name}
-                        onChange={this.updateStateFromEvent((s, v) => (accessor(s).name = v))}
-                    />
-                    <div className="ms-row vc">
-                        <div className="m-col-16-24">
-                            <input
-                                className="win-textbox"
-                                type="text"
-                                placeholder="Address"
-                                value={address.line1}
-                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).line1 = v))}
-                            />
-                        </div>
-                        <div className="m-col-8-24">
-                            <input
-                                className="win-textbox"
-                                type="text"
-                                placeholder="Apt, suite, etc. (optional)"
-                                value={address.line2}
-                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).line2 = v))}
-                            />
-                        </div>
-                    </div>
-                    <div className="ms-row vc">
-                        <div className="col-1-1">
-                            <input
-                                className="win-textbox"
-                                type="text"
-                                placeholder="City"
-                                value={address.city}
-                                onChange={this.updateStateFromEvent((s, v) => (accessor(s).city = v))}
-                            />
-                        </div>
-                    </div>
-                    <div className="ms-row vc">
-                        <div
-                            className={`m-col-${
-                                states && states.length > 0 ? "8" : countryData.hasPostalCodes ? "12" : "24"
-                            }-24`}>
-                            <select
-                                className="win-select"
-                                value={countryCode}
-                                onChange={this.updateStateFromEvent(updateCountry)}>
-                                {countries}
-                            </select>
-                        </div>
-                        {!states || states.length === 0 ? null : (
-                            <div className="m-col-8-24">
-                                <select
-                                    className="win-select"
-                                    value={stateCode}
-                                    onChange={this.updateStateFromEvent((s, v) => (accessor(s).stateCode = v))}>
-                                    {states}
-                                </select>
-                            </div>
-                        )}
-                        {!countryData.hasPostalCodes ? null : (
-                            <div className={`m-col-${states && states.length > 0 ? "8" : "12"}-24`}>
-                                <input
-                                    className="win-textbox"
-                                    type="text"
-                                    placeholder="Postal code"
-                                    value={address.zip}
-                                    onChange={this.updateStateFromEvent((s, v) => (accessor(s).zip = v))}
-                                />
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     private generateCustomerInformation() {
-        const {
-            customer: { email, error }
-        } = this.state;
+        const { email, error, shippingAddress } = this.state;
 
         return (
             <section id="customer-information">
@@ -489,17 +303,21 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                     type="text"
                                     placeholder="Email address"
                                     value={email}
-                                    onChange={this.updateStateFromEvent((s, v) => (s.customer.email = v))}
+                                    onChange={this.updateStateFromEvent((s, v) => (s.email = v))}
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="form-group">
                         <label className="control-label">{"Shipping address"}</label>
-                        {this.generateAddressForm("shipping")}
+                        <AddressForm
+                            type="shipping"
+                            address={shippingAddress}
+                            onChange={a => this.setState({ shippingAddress: a })}
+                        />
                     </div>
                 </form>
-                {error ? <p className="error red">{error}</p> : null}
+                {error.map(e => <p className="error red">{e}</p>).defaultValue(<span />)}
                 <div className="ms-row vc zero-margin">
                     <div className="xs-col-8-24">
                         <a href="/cart">
@@ -524,7 +342,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             this.setState({ page: page.customerInformation });
         };
 
-        const address = this.state.customer.shippingAddress;
+        const address = this.state.shippingAddress;
         const country = Countries.filter(c => c.iso === address.countryCode)[0];
 
         return (
@@ -549,7 +367,9 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                 {address.countryCode === "US" ? "Standard Shipping" : "International Shipping"}
                             </div>
                             <div className="xs-col-9-24 text-right">
-                                {`USD $${this.props.totals.shippingTotal.toFixed(2)}`}
+                                {this.state.selectedRate.map(
+                                    rate => `$${this.props.totals.currency.toUpperCase()} ${rate.value.toFixed(2)}`
+                                )}
                             </div>
                         </div>
                     </div>
@@ -573,12 +393,11 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
 
     private generatePaymentPage() {
         const {
-            payment: {
-                card: { number, cvv, expiry, name },
-                error,
-                sameBillingAddress,
-                loading
-            }
+            card: { number, cvv, expiry, name },
+            error,
+            sameBillingAddress,
+            loading,
+            billingAddress
         } = this.state;
 
         const back = (event: React.MouseEvent) => {
@@ -605,7 +424,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                     placeholder="Card number"
                                     value={number}
                                     onChange={this.updateStateFromEvent(
-                                        (s, v) => (s.payment.card.number = creditcard.formatCardNumber(v))
+                                        (s, v) => (s.card.number = creditcard.formatCardNumber(v))
                                     )}
                                 />
                                 <div className="ms-row vc">
@@ -615,7 +434,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                             className="win-textbox"
                                             placeholder="Name on card"
                                             value={name}
-                                            onChange={this.updateStateFromEvent((s, v) => (s.payment.card.name = v))}
+                                            onChange={this.updateStateFromEvent((s, v) => (s.card.name = v))}
                                         />
                                     </div>
                                     <div className="m-col-6-24">
@@ -625,7 +444,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                             placeholder="MM / YY"
                                             value={expiry}
                                             onChange={this.updateStateFromEvent(
-                                                (s, v) => (s.payment.card.expiry = formatExpiry(v))
+                                                (s, v) => (s.card.expiry = formatExpiry(v))
                                             )}
                                         />
                                     </div>
@@ -636,7 +455,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                                             placeholder="CVV"
                                             maxLength={4}
                                             value={cvv}
-                                            onChange={this.updateStateFromEvent((s, v) => (s.payment.card.cvv = v))}
+                                            onChange={this.updateStateFromEvent((s, v) => (s.card.cvv = v))}
                                         />
                                     </div>
                                 </div>
@@ -647,36 +466,42 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                         <label className="control-label">{"Billing address"}</label>
                         <div
                             className="ms-row vc cursor-pointer"
-                            onClick={this.updateStateFromEvent(s => (s.payment.sameBillingAddress = true))}>
+                            onClick={this.updateStateFromEvent(s => (s.sameBillingAddress = true))}>
                             <div className="xs-col-2-24">
                                 <input
                                     type="radio"
                                     name="sameBillingAddress"
                                     className="win-radio"
                                     checked={sameBillingAddress}
-                                    onChange={this.updateStateFromEvent(s => (s.payment.sameBillingAddress = true))}
+                                    onChange={this.updateStateFromEvent(s => (s.sameBillingAddress = true))}
                                 />
                             </div>
                             <div className="xs-col-20-24">{"Same as shipping address"}</div>
                         </div>
                         <div
                             className="ms-row vc cursor-pointer"
-                            onClick={this.updateStateFromEvent(s => (s.payment.sameBillingAddress = false))}>
+                            onClick={this.updateStateFromEvent(s => (s.sameBillingAddress = false))}>
                             <div className="xs-col-2-24">
                                 <input
                                     type="radio"
                                     name="sameBillingAddress"
                                     className="win-radio"
                                     checked={!sameBillingAddress}
-                                    onChange={this.updateStateFromEvent(s => (s.payment.sameBillingAddress = false))}
+                                    onChange={this.updateStateFromEvent(s => (s.sameBillingAddress = false))}
                                 />
                             </div>
                             <div className="xs-col-20-24">{"Use a different billing address"}</div>
                         </div>
-                        {!sameBillingAddress && this.generateAddressForm("billing")}
+                        {!sameBillingAddress ? null : (
+                            <AddressForm
+                                type="billing"
+                                address={billingAddress}
+                                onChange={a => this.setState({ billingAddress: a })}
+                            />
+                        )}
                     </div>
                 </form>
-                {error ? <p className="error red">{error}</p> : null}
+                {error.map(error => <p className="error red">{error}</p>).defaultValue(<span />)}
                 <div className="ms-row vc zero-margin">
                     <div className="xs-col-12-24">
                         <a href="#" onClick={back}>
@@ -720,23 +545,44 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         // TODO: Call props.removeDiscount.then((shouldRemove))
     }
 
-    private continueToShipping(event: React.MouseEvent) {
+    private async continueToShipping(event: React.MouseEvent) {
         event.preventDefault();
 
-        const { email, shippingAddress } = this.state.customer;
-        const addressValidation = this.validateAddress(shippingAddress);
+        const { email, shippingAddress, loading } = this.state;
+
+        if (loading) {
+            return;
+        }
 
         if (!email || email.indexOf("@") === -1 || email.indexOf(".") === -1) {
-            this.setState({ customer: { ...this.state.customer, error: "You must enter a valid email address." } });
-        } else if (!addressValidation.success) {
-            this.setState({ customer: { ...this.state.customer, error: addressValidation.message } });
-        } else {
-            this.setState({
-                customer: { ...this.state.customer, error: undefined },
-                summary: { ...this.state.summary, error: undefined },
-                page: page.shippingMethod
-            });
+            this.setState({ error: Option.ofSome("You must enter a valid email address.") });
+            return;
         }
+
+        const addressValidation = this.validateAddress(shippingAddress);
+
+        if (addressValidation.isSome()) {
+            this.setState({ error: addressValidation });
+            return;
+        }
+
+        this.setState({ error: Option.ofNone(), loading: true });
+
+        await this.props
+            .onCalculateShipping(shippingAddress)
+            .iter(rates => {
+                this.setState({
+                    rates,
+                    selectedRate: rates.length > 0 ? Option.ofSome(rates[0]) : Option.ofNone()
+                });
+            })
+            .iterError(error => {
+                const message = error instanceof Error ? error.message : `Encountered unknown error: ${error}`;
+
+                console.error("onCalculateShipping promise threw an error.", { message, error: error });
+                this.setState({ error: Option.ofSome(message), loading: false });
+            })
+            .get();
     }
 
     private continueToPayment(event: React.MouseEvent) {
@@ -745,16 +591,27 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
         this.setState({ page: page.paymentMethod });
     }
 
-    private completeOrder(event: React.MouseEvent) {
+    private async completeOrder(event: React.MouseEvent) {
         event.preventDefault();
 
-        const {
-            payment,
-            payment: { card }
-        } = this.state;
+        const { card, loading, sameBillingAddress, billingAddress, shippingAddress, selectedRate, rates } = this.state;
 
-        if (payment.loading) {
+        if (loading) {
             return;
+        }
+
+        if (rates.length > 0 && selectedRate.isNone()) {
+            this.setState({ error: Option.ofSome("You must select a shipping rate.") });
+            return;
+        }
+
+        if (!sameBillingAddress) {
+            const validation = this.validateAddress(billingAddress);
+
+            if (validation.isSome()) {
+                this.setState({ error: validation });
+                return;
+            }
         }
 
         const expiry = compute<{ month: number; year: number }>(() => {
@@ -765,44 +622,30 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
                 year: parsed && typeof parsed.year === "number" ? parsed.year : 0
             };
         });
-        const error = compute<Option<string>>(() => {
-            if (!payment.sameBillingAddress) {
-                const validation = this.validateAddress(payment.billingAddress);
 
-                if (!validation.success) {
-                    return Option.ofSome(validation.message);
-                }
-            }
-
-            return Option.ofNone();
-        });
-
-        // TODO: call props.completeOrder(card).then((valid))
         this.setState({
-            payment: {
-                ...payment,
-                error: error.defaultValue(undefined as any),
-                loading: error.isNone()
-            }
+            error: Option.ofNone(),
+            loading: true
         });
 
-        if (error.isSome()) {
-            return;
-        }
+        await this.props
+            .onConfirmPayment(
+                card,
+                selectedRate,
+                this.state.coupons,
+                sameBillingAddress ? Option.ofSome(billingAddress) : Option.ofNone()
+            )
+            .iter(result => window.location.assign(result.url))
+            .iterError(error => {
+                const message = error instanceof Error ? error.message : `Encountered unknown error: ${error}`;
+
+                console.error("onCofirmPayment promise threw an error.", { message, error: error });
+                this.setState({ error: Option.ofSome(message), loading: false });
+            })
+            .get();
     }
 
     //#endregion
-
-    public componentWillUpdate(newProps: CheckoutPageProps, newState: CheckoutPageState) {
-        if (newState.page != this.state.page) {
-            //Page changed, remove the coupon error
-            newState.summary.error = undefined;
-        }
-    }
-
-    public componentWillReceiveProps(props: CheckoutPageProps) {
-        this.configureState(props, true);
-    }
 
     public render() {
         const currentPage = this.state.page;
@@ -851,4 +694,130 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             </main>
         );
     }
+}
+
+interface AddressFormProps extends React.Props<any> {
+    type: "billing" | "shipping";
+    address: Address;
+    onChange: (address: Address) => void;
+}
+
+function AddressForm(this: void, { type, address, onChange }: AddressFormProps): JSX.Element {
+    /**
+     * A function for selecting a new country and performing maintenance on its Zip and StateCode props.
+     */
+    function updateCountry(iso: string) {
+        const countryData = Countries.filter(c => c.iso === iso)[0];
+        const a = { ...address };
+        a.countryCode = iso;
+
+        //If the country has states, select the first one. If not, delete the state
+        if (countryData.states.length > 0) {
+            a.stateCode = Option.ofSome(countryData.states[0].iso);
+        } else {
+            a.stateCode = Option.ofNone();
+        }
+
+        //If the country doesn't have postal codes, delete it.
+        if (countryData.hasPostalCodes) {
+            a.zip = a.zip.isSome() ? a.zip : Option.ofSome("");
+        } else {
+            a.zip = Option.ofNone();
+        }
+
+        onChange(a);
+    }
+
+    const countryData = Countries.filter(c => c.iso === address.countryCode)[0];
+    const countries = Countries.map(c => (
+        <option key={c.iso} value={c.iso}>
+            {c.name}
+        </option>
+    ));
+    const states = countryData.states.map(s => (
+        <option key={s.iso} value={s.iso}>
+            {s.name}
+        </option>
+    ));
+
+    return (
+        <div className="address-form form-container ms-row">
+            <div className="xs-col-24-24">
+                <input
+                    className="win-textbox"
+                    type="text"
+                    placeholder="Name or company name"
+                    value={address.name}
+                    onChange={e => onChange({ ...address, name: e.currentTarget.value })}
+                />
+                <div className="ms-row vc">
+                    <div className="m-col-16-24">
+                        <input
+                            className="win-textbox"
+                            type="text"
+                            placeholder="Address"
+                            value={address.line1}
+                            onChange={e => onChange({ ...address, line1: e.currentTarget.value })}
+                        />
+                    </div>
+                    <div className="m-col-8-24">
+                        <input
+                            className="win-textbox"
+                            type="text"
+                            placeholder="Apt, suite, etc. (optional)"
+                            value={address.line2}
+                            onChange={e => onChange({ ...address, line2: e.currentTarget.value })}
+                        />
+                    </div>
+                </div>
+                <div className="ms-row vc">
+                    <div className="col-1-1">
+                        <input
+                            className="win-textbox"
+                            type="text"
+                            placeholder="City"
+                            value={address.city}
+                            onChange={e => onChange({ ...address, city: e.currentTarget.value })}
+                        />
+                    </div>
+                </div>
+                <div className="ms-row vc">
+                    <div
+                        className={`m-col-${
+                            states && states.length > 0 ? "8" : countryData.hasPostalCodes ? "12" : "24"
+                        }-24`}>
+                        <select
+                            className="win-select"
+                            value={address.countryCode}
+                            onChange={e => updateCountry(e.currentTarget.value)}>
+                            {countries}
+                        </select>
+                    </div>
+                    {!states || states.length === 0 ? null : (
+                        <div className="m-col-8-24">
+                            <select
+                                className="win-select"
+                                value={address.stateCode.defaultValue(countryData.states[0].iso)}
+                                onChange={e =>
+                                    onChange({ ...address, stateCode: Option.ofSome(e.currentTarget.value) })
+                                }>
+                                {states}
+                            </select>
+                        </div>
+                    )}
+                    {!countryData.hasPostalCodes ? null : (
+                        <div className={`m-col-${states && states.length > 0 ? "8" : "12"}-24`}>
+                            <input
+                                className="win-textbox"
+                                type="text"
+                                placeholder="Postal code"
+                                value={address.zip.defaultValue("")}
+                                onChange={e => onChange({ ...address, zip: Option.ofSome(e.currentTarget.value) })}
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }

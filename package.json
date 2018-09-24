@@ -1,6 +1,6 @@
 {
     "name": "@nozzlegear/react-checkout",
-    "version": "2.1.0",
+    "version": "3.0.0-beta1",
     "description": "Shopify-style checkout and tracking pages as React components.",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -40,7 +40,7 @@
         "winjs-grid": "github:winjs/grid"
     },
     "dependencies": {
-        "@nozzlegear/railway": "^1.1.1",
+        "@nozzlegear/railway": "2",
         "cc-expiry": "^1.0.0",
         "classnames": "^2.2.5",
         "creditcardutils": "^1.0.0",
