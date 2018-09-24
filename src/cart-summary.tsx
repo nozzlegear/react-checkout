@@ -58,9 +58,11 @@ export function CartSummary({ totals, coupons, ...props }: CartSummaryProps) {
                     </div>
                     <div className="ms-row vc zero-margin shipping-total">
                         <div className="xs-col-6-24">{"Shipping"}</div>
-                        <div className="xs-col-18-24 text-right">{`${currency} ${props.shippingTotal
-                            .map(toFixed)
-                            .defaultValue("––")}`}</div>
+                        <div className="xs-col-18-24 text-right">
+                            {props.shippingTotal
+                                .map(value => (value === 0 ? "Free" : currency + " " + toFixed(value)))
+                                .defaultValue("––")}
+                        </div>
                     </div>
                     <hr />
                     <div className="ms-row vc zero-margin grand-total">
