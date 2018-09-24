@@ -620,7 +620,7 @@ export class CheckoutPage extends React.Component<CheckoutPageProps, CheckoutPag
             return;
         }
 
-        if (!sameBillingAddress) {
+        if (sameBillingAddress) {
             const validation = this.validateAddress(billingAddress);
 
             if (validation.isSome()) {
